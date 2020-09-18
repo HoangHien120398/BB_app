@@ -1,4 +1,4 @@
-import {useState} from 'react';
+import { useState, useEffect } from 'react';
 import * as React from 'react';
 import {
   StyleSheet,
@@ -10,7 +10,7 @@ import {
   FlatList,
   Dimensions,
   ImageBackground,
-  Linking, //sửa
+  Linking, Alert //sửa
 } from 'react-native';
 import 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/Feather';
@@ -19,53 +19,6 @@ import AutoHeightImage from 'react-native-auto-height-image';
 import Constant from '../constant/Constant';
 //import ProductDetailScreen from '../components/ProductDetailScreen';
 
-const dataList = [
-  {
-    src: Constant.SearchResultScreen.banner,
-    money: '3.9000.000.000 đ',
-    address: '172 Ngọc Khánh, Quận Ba Đình, Hà Nội',
-    numberbedroom: '3',
-    numberbathroom: '2',
-    size: '102.6m²',
-    date: '5/8/2020',
-  },
-  {
-    src: Constant.SearchResultScreen.banner,
-    money: '3.9000.000.000 đ',
-    address: '123',
-    numberbedroom: '3',
-    numberbathroom: '2',
-    size: '102.6m²',
-    date: '5/8/2020',
-  },
-  {
-    src: Constant.SearchResultScreen.banner,
-    money: '3.9000.000.000 đ',
-    address: 'Tổ 3, Trung Sơn, Tam Điệp, Ninh Bình',
-    numberbedroom: '3',
-    numberbathroom: '2',
-    size: '102.6m²',
-    date: '5/8/2020',
-  },
-  {
-    src: Constant.SearchResultScreen.banner,
-    money: '3.9000.000.000 đ',
-    address: 'Tổ 3, Trung Sơn, Tam Điệp, Ninh Bình',
-    numberbedroom: '3',
-    numberbathroom: '2',
-    size: '102.6m²',
-    date: '5/8/2020',
-  },
-  {
-    src: Constant.SearchResultScreen.banner,
-    money: '3.9000.000.000 đ',
-    address: 'Tổ 3, Trung Sơn, Tam Điệp, Ninh Bình',
-    numberbedroom: '3',
-    numberbathroom: '2',
-    size: '102.6m²',
-    date: '5/8/2020',
-  },
-];
 
 const BANNER =
   'https://dankocity.nhadat86.vn/wp-content/uploads/2019/10/cv.jpg';
@@ -73,7 +26,7 @@ function Header(props) {
   return (
     <View style={styles.header}>
       <Text style={styles.headertext}>
-        1/7 - 31/7 > Giá trung bình: {props.money}
+        1/7 - 31/7 > Giá trung bình: {props.cost_average}
       </Text>
     </View>
   );
@@ -92,25 +45,26 @@ function Item(props) {
       <View>
         <AutoHeightImage
           width={Dimensions.get('window').width}
-          source={Constant.SearchResultScreen.banner}
+          source={{ uri: props.image }}
+          //source={Constant.SearchResultScreen.banner}
         />
-        <Text style={styles.itemtext}>{props.money}</Text>
+        <Text style={styles.itemtext}>{props.price}</Text>
       </View>
-      <View style={{padding: 8}}>
-        <Text style={styles.addresstext}>{props.address}</Text>
+      <View style={{ padding: 8 }}>
+        {/* <Text style={styles.addresstext}>{props.address}</Text> */}
         <View style={styles.detailinformation}>
           <View style={styles.detail}>
-            <Text style={{marginRight: 5}}>{props.numberbedroom}</Text>
+            <Text style={{ marginRight: 5 }}>{props.number_bedroom}</Text>
             <Image
-              style={{marginRight: 5}}
+              style={{ marginRight: 5 }}
               source={Constant.SearchResultScreen.bedroom}
             />
-            <Text style={{marginRight: 5}}>{props.numberbathroom}</Text>
+            <Text style={{ marginRight: 5 }}>{props.number_bathroom}</Text>
             <Image
-              style={{marginRight: 5}}
+              style={{ marginRight: 5 }}
               source={Constant.SearchResultScreen.bathroom}
             />
-            <Text>{props.size}</Text>
+            <Text>{props.area}</Text>
           </View>
 
           <View style={styles.date}>
@@ -122,140 +76,131 @@ function Item(props) {
   );
 }
 
-export default function SearchResultScreen({navigation}) {
+export default function SearchResultScreen({ navigation }) {
   const [valueSearch, onChangeTextSearch] = useState('');
   const [valueMenu, onChangeTextMenu] = useState('');
-/*
-  {['Primary', 'Secondary', 'Success', 'Info', 'Warning', 'Danger'].map(
-    (variant) => (
-      <DropdownButton
-        as={ButtonGroup}
-        key={variant}
-        id={`dropdown-variants-${variant}`}
-        variant={variant.toLowerCase()}
-        title={variant}
-      >
-        <Dropdown.Item eventKey="1">Action</Dropdown.Item>
-        <Dropdown.Item eventKey="2">Another action</Dropdown.Item>
-        <Dropdown.Item eventKey="3" active>
-          Active Item
-        </Dropdown.Item>
-        <Dropdown.Divider />
-        <Dropdown.Item eventKey="4">Separated link</Dropdown.Item>
-      </DropdownButton>
-    ),
-  )}</>*/
+  const [cost_average, setCost_average] = useState('');
+  const [error, setError] = useState('');
+  const [search, setSearch] = useState([]);
+  useEffect(async () => {
+    const respone = await fetch("https://barrierbreakerapi.herokuapp.com/?district=ba%20%C4%91%C3%ACnh&min_price=0&max_price=500000000000&page=1");
+    if (respone == 'error') {
+      setError('error')
+    }
+    const data = await respone.json();
+    const cost_result = data.average;
+    const listData = data.list_data
+    setCost_average(cost_result);
+    setSearch(listData);
 
 
-
-
-
+  }, [])
 
 
   var data = [
     [
       'Phường',
       'Cống Vị',
-      'Điện Biên','Đội Cấn', 'Giảng Võ','Kim Mã','Liễu Giai','Ngọc Hà','Ngọc Khánh','Nguyễn Trung Trực','Phúc Xá', 'Quán Thánh', 'Thành Công','Trúc Bạch','Vĩnh Phúc'],
+      'Điện Biên', 'Đội Cấn', 'Giảng Võ', 'Kim Mã', 'Liễu Giai', 'Ngọc Hà', 'Ngọc Khánh', 'Nguyễn Trung Trực', 'Phúc Xá', 'Quán Thánh', 'Thành Công', 'Trúc Bạch', 'Vĩnh Phúc'],
     ['Đường',
-    'An Xá',
-    'Bà Huyện Thanh Quan',
-    'Bắc Sơn',
-    'Bưởi',
-    'Cao Bá Quát',
-    'Cầu Giấy',
-    'Châu Long',
-    'Chu Văn An',
-    'Chùa Một Cột',
-    'Cửa Bắc',
-    'Đặng Dung',
-    'Đặng Tất',
-    'Đào Tấn',
-    'Điện Biên Phủ',
-    'Độc Lập',
-    'Đốc Ngữ',
-    'Đội Cấn',
-    'Đội Nhân',
-    'Giang Văn Minh',
-    'Giảng Võ',
-    'Hàng Bún',
-    'Hàng Đậu',
-    'Hàng Than',
-    'Hoàng Diệu',
-    'Hoàng Hoa Thám',
-    'Hoàng Văn Thụ',
-    'Hòe Nhai',
-    'Hồng Hà',
-    'Hồng Phúc',
-    'Hùng Vương',
-    'Huỳnh Thúc Kháng',
-    'Khúc Hạo',
-    'Kim Mã',
-    'Kim Mã Thượng',
-    'La Thành',
-    'Lạc Chính',
-    'Láng Hạ',
-    'Lê Duẩn',
-    'Lê Hồng Phong',
-    'Lê Trực',
-    'Liễu Giai',
-    'Linh Lang',
-    'Lý Nam Đế',
-    'Mạc Đĩnh Chi',
-    'Mai Anh Tuấn',
-    'Nam Cao',
-    'Nam Tràng',
-    'Nghĩa Dũng',
-    'Ngọc Hà',
-    'Ngọc Khánh',
-    'Ngũ Xã',
-    'Nguyễn Biểu',
-    'Nguyễn Cảnh Chân',
-    'Nguyễn Chí Thanh',
-    'Nguyễn Công Hoan',
-    'Nguyên Hồng',
-    'Nguyễn Khắc Hiếu',
-    'Nguyễn Khắc Nhu',
-    'Nguyễn Phạm Tuân',
-    'Nguyễn Thái Học',
-    'Nguyễn Thiếp',
-    'Nguyễn Tri Phương',
-    'Nguyễn Trung Trực',
-    'Nguyễn Trường Tộ',
-    'Nguyễn Văn Ngọc',
-    'Núi Trúc',
-    'Ông Ích Khiêm',
-    'Phạm Hồng Thái',
-    'Phạm Huy Thông',
-    'Phan Đình Phùng',
-    'Phan Huy Ích',
-    'Phan Kế Bính',
-    'Phó Đức Chính',
-    'Phúc Xá',
-    'Quần Ngựa',
-    'Quán Thánh',
-    'Sơn Tây',
-    'Tân Ấp',
-    'Thanh Bảo',
-    'Thành Công',
-    'Thanh Niên',
-    'Tôn Thất Đàm',
-    'Tôn Thất Thiệp',
-    'Trần Huy Liệu',
-    'Trần Phú',
-    'Trần Tế Xương',
-    'Trấn Vũ',
-    'Trúc Bạch',
-    'Vạn Bảo',
-    'Văn Cao',
-    'Vạn Phúc',
-    'Vĩnh Phúc',
-    'Yên Ninh',
-    'Yên Phụ',
-    'Yên Thế'],
-    ['Vị trí', 'Đông','Tây', 'Nam', 'Bắc', 'Đông Nam', 'Tây Nam'],
+      'An Xá',
+      'Bà Huyện Thanh Quan',
+      'Bắc Sơn',
+      'Bưởi',
+      'Cao Bá Quát',
+      'Cầu Giấy',
+      'Châu Long',
+      'Chu Văn An',
+      'Chùa Một Cột',
+      'Cửa Bắc',
+      'Đặng Dung',
+      'Đặng Tất',
+      'Đào Tấn',
+      'Điện Biên Phủ',
+      'Độc Lập',
+      'Đốc Ngữ',
+      'Đội Cấn',
+      'Đội Nhân',
+      'Giang Văn Minh',
+      'Giảng Võ',
+      'Hàng Bún',
+      'Hàng Đậu',
+      'Hàng Than',
+      'Hoàng Diệu',
+      'Hoàng Hoa Thám',
+      'Hoàng Văn Thụ',
+      'Hòe Nhai',
+      'Hồng Hà',
+      'Hồng Phúc',
+      'Hùng Vương',
+      'Huỳnh Thúc Kháng',
+      'Khúc Hạo',
+      'Kim Mã',
+      'Kim Mã Thượng',
+      'La Thành',
+      'Lạc Chính',
+      'Láng Hạ',
+      'Lê Duẩn',
+      'Lê Hồng Phong',
+      'Lê Trực',
+      'Liễu Giai',
+      'Linh Lang',
+      'Lý Nam Đế',
+      'Mạc Đĩnh Chi',
+      'Mai Anh Tuấn',
+      'Nam Cao',
+      'Nam Tràng',
+      'Nghĩa Dũng',
+      'Ngọc Hà',
+      'Ngọc Khánh',
+      'Ngũ Xã',
+      'Nguyễn Biểu',
+      'Nguyễn Cảnh Chân',
+      'Nguyễn Chí Thanh',
+      'Nguyễn Công Hoan',
+      'Nguyên Hồng',
+      'Nguyễn Khắc Hiếu',
+      'Nguyễn Khắc Nhu',
+      'Nguyễn Phạm Tuân',
+      'Nguyễn Thái Học',
+      'Nguyễn Thiếp',
+      'Nguyễn Tri Phương',
+      'Nguyễn Trung Trực',
+      'Nguyễn Trường Tộ',
+      'Nguyễn Văn Ngọc',
+      'Núi Trúc',
+      'Ông Ích Khiêm',
+      'Phạm Hồng Thái',
+      'Phạm Huy Thông',
+      'Phan Đình Phùng',
+      'Phan Huy Ích',
+      'Phan Kế Bính',
+      'Phó Đức Chính',
+      'Phúc Xá',
+      'Quần Ngựa',
+      'Quán Thánh',
+      'Sơn Tây',
+      'Tân Ấp',
+      'Thanh Bảo',
+      'Thành Công',
+      'Thanh Niên',
+      'Tôn Thất Đàm',
+      'Tôn Thất Thiệp',
+      'Trần Huy Liệu',
+      'Trần Phú',
+      'Trần Tế Xương',
+      'Trấn Vũ',
+      'Trúc Bạch',
+      'Vạn Bảo',
+      'Văn Cao',
+      'Vạn Phúc',
+      'Vĩnh Phúc',
+      'Yên Ninh',
+      'Yên Phụ',
+      'Yên Thế'],
+    ['Vị trí', 'Đông', 'Tây', 'Nam', 'Bắc', 'Đông Nam', 'Tây Nam'],
     ['Diện tích', '0 - 25 m²', '25-50m²', '50-100m²', '100-150m²', '150-200m²', '200-250m²', '250-300m²', '300-500m²'
-  ],
+    ],
   ];
 
   /*if(onPress = Constant.LocationScreen.BaDinh){
@@ -266,59 +211,59 @@ export default function SearchResultScreen({navigation}) {
       ]
     )
   }*/
-if(valueSearch=='123')
-{
-  return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity
-          onPress={() => navigation.goBack()}
-          style={styles.iconback}>
-          <Icon
-            name="chevron-left"
-            size={30}
-            color="black"
-            style={{textAlign: 'center', marginTop: 10}
-          } />
-        </TouchableOpacity>
-        <TextInput
-          placeholder="Tìm địa điểm, căn hộ chung cư..."
-          style={{height: 50, borderColor: '#468684', borderWidth: 1, flex: 8}}
-          onChangeText={(text) => onChangeTextSearch(text)}
-          value={valueSearch}
-        />
-      </View>
-      <View style={{flex: 1}}>
-        {/* Filter bar */}
-        <DropdownMenu
-          bgColor={'#ecfdfa'}
-          tintColor={'#666666'}
-          activityTintColor={'#238778'}
-          handler={(selection, row) =>
-            onChangeTextMenu({text: data[selection][row]})
-          }
-          data={data}>
+  if (valueSearch=='123') {
+    return (
+      <View style={styles.container}>
+        <View style={styles.header}>
           <TouchableOpacity
+            onPress={() => navigation.goBack()}
+            style={styles.iconback}>
+            <Icon
+              name="chevron-left"
+              size={30}
+              color="black"
+              style={{ textAlign: 'center', marginTop: 10 }
+              } />
+          </TouchableOpacity>
+          <TextInput
+            placeholder="Tìm địa điểm, căn hộ chung cư..."
+            style={{ height: 50, borderColor: '#468684', borderWidth: 1, flex: 8 }}
+            onChangeText={(text) => onChangeTextSearch(text)}
+            value={valueSearch}
+          />
+        </View>
+        <View style={{ flex: 1 }}>
+          {/* Filter bar */}
+          <DropdownMenu
+            bgColor={'#ecfdfa'}
+            tintColor={'#666666'}
+            activityTintColor={'#238778'}
+            handler={(selection, row) =>
+              onChangeTextMenu({ text: data[selection][row] })
+            }
+            data={data}>
+            <TouchableOpacity
               onPress={() => Linking.openURL('http://www.google.com.vn/')}>
-            {/*sửa*/}
-            {/* <AutoHeightImage
+              {/*sửa*/}
+              {/* <AutoHeightImage
               width={Dimensions.get('window').width}
               height={100}
               source={{uri: BANNER}}
             /> */}
-          </TouchableOpacity>
-          
-        <ImageBackground
-         source={require('../assets/notfound.png')} style={styles.image_error} 
-         >
-           <Text style={styles.texterror}>Thật đáng tiếc! Chúng tôi không tìm thấy căn hộ mà bạn đã chọn</Text>
-        </ImageBackground>
-          
-        </DropdownMenu>
+            </TouchableOpacity>
+
+            <ImageBackground
+              source={require('../assets/notfound.png')} style={styles.image_error}
+            >
+              <Text style={styles.texterror}>Thật đáng tiếc! Chúng tôi không tìm thấy căn hộ mà bạn đã chọn</Text>
+            </ImageBackground>
+
+          </DropdownMenu>
+        </View>
       </View>
-    </View>
-  );
-}
+    );
+  }
+  
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -329,24 +274,24 @@ if(valueSearch=='123')
             name="chevron-left"
             size={30}
             color="black"
-            style={{textAlign: 'center', marginTop: 10}}
+            style={{ textAlign: 'center', marginTop: 10 }}
           />
         </TouchableOpacity>
         <TextInput
           placeholder="Tìm địa điểm, căn hộ chung cư..."
-          style={{height: 50, borderColor: '#468684', borderWidth: 1, flex: 8}}
+          style={{ height: 50, borderColor: '#468684', borderWidth: 1, flex: 8 }}
           onChangeText={(text) => onChangeTextSearch(text)}
           value={valueSearch}
         />
       </View>
-      <View style={{flex: 1}}>
+      <View style={{ flex: 1 }}>
         {/* Filter bar */}
         <DropdownMenu
           bgColor={'#ecfdfa'}
           tintColor={'#238778'}
           activityTintColor={'#238778'}
           handler={(selection, row) =>
-            onChangeTextMenu({text: data[selection][row]})
+            onChangeTextMenu({ text: data[selection][row] })
           }
           data={data}>
           <TouchableOpacity
@@ -354,38 +299,38 @@ if(valueSearch=='123')
             <AutoHeightImage
               width={Dimensions.get('window').width}
               height={100}
-              source={{uri: BANNER}}
+              source={{ uri: BANNER }}
             />
           </TouchableOpacity>
 
           {/* Label List */}
-          {/*<Text
+          <Text
             style={{
               fontSize: 18,
               marginVertical: 8,
-              color: '#707070',
+              color: '#468684',
               marginLeft: 8,
             }}>
             Danh sách phù hợp
-          </Text>*/}
+          </Text>
 
           {/* Danh sách địa chỉ */}
           <FlatList
-             ListHeaderComponent={() => <Header money={'3000'} />}
-            renderItem={({item, index}) => (
+            ListHeaderComponent={() => <Header cost_average={cost_average} />}
+            data={search}
+            renderItem={({item}) => (
               <Item
-                index={index}
-                money={item.money}
-                address={item.address}
-                numberbedroom={item.numberbedroom}
-                numberbathroom={item.numberbathroom}
+                price={item.price}
+                number_bedroom={item.number_bedroom}
+                number_bathroom={item.number_bathroom}
                 date={item.date}
-                size={item.size}
+                area={item.area}
+                image={item.image}
                 nav={navigation}
               />
             )}
-            keyExtractor={(_, i) => i.toString()}
-            data={dataList}
+             keyExtractor={(_, i) => i.toString()}
+             
           />
         </DropdownMenu>
       </View>
@@ -414,6 +359,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'UVN Sach Vo',
     color: '#468684',
+    fontSize: 15
   },
 
   itemtext: {
@@ -436,7 +382,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     fontFamily: 'UVN Sach Vo',
     color: '#468684',
-    
+
   },
 
   detailinformation: {
@@ -456,23 +402,24 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     marginRight: 5,
     fontFamily: 'UVN Sach Vo',
+    //fontFamily: "vincHand",
     fontWeight: "bold",
   },
-  dataList:{
+  dataList: {
     fontFamily: 'UVN Sach Vo',
   },
   image_error: {
     flex: 1,
-    resizeMode:"cover",
+    resizeMode: "cover",
     marginBottom: 200,
-    justifyContent:"center"
+    justifyContent: "center"
   },
   texterror: {
     fontSize: 25,
     marginTop: 500,
     marginLeft: 30,
     color: '#74928e',
-    fontWeight:'bold'
+    fontWeight: 'bold'
   }
-  
+
 });
