@@ -33,7 +33,7 @@ export default function ContactScreen({ navigation }) {
 if(name?.trim() && numberphone?.trim() && email?.trim() && note?.trim())
 {
     if (regText?.test(name)) {
-        if (regNumber.test(numberphone)) 
+        if (regNumber.test(numberphone) && numberphone.length > 9) 
          
         {
             if( regEmail.test(email))
@@ -88,7 +88,7 @@ else{
            <TextInput 
            placeholder="Ghi chú: "
            autoCapitalize="none"
-           onChangeText={note => setNote(email)}
+           onChangeText={note => setNote(note)}
            value = {note}
            style={styles.textnote}></TextInput>
            

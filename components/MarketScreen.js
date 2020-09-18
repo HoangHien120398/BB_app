@@ -29,12 +29,23 @@ export default function App({ navigation }) {
   const [expanded4, setExpanded4] = React.useState(false)
   const [expanded5, setExpanded5] = React.useState(false)
   const [customStyleIndex, setcustomStyleIndex] = React.useState(0);
+  const [legend, setLegend] =React.useState(false)
 
   const handlePress = (expanded, setExpanded) => setExpanded(!expanded);
 
   const greenBlue = "#ff6347";
   const petrel = "rgb(59, 145, 153)";
   
+  const y1 = 100;
+  const y2 = 200;
+  const y3 = 210;
+  const y4 = 156;
+  const y5 = 300;
+  const y6 = 85;
+  const y7 = 101;
+  const y8 = 90;
+  const y9 = 12;
+  const day =["01 April","08 April","15 April","22 April","29 April","06 May","13 May","19 May","03 June"];
   let sampleData = [
     {
       
@@ -115,47 +126,49 @@ export default function App({ navigation }) {
 
                                       </View>
                                       <LineChart style={styles.linechartOne}
+                                      
+
                                         data={{
-                                            labels: ['label1','label2','label3','label4','label5','label6','label7','label8'],
+                                            
+                                            // labels: ['label1','label2','label3','label4','label5','label6','label7','label8'],
                                             dataSets: [
                                           {
-                                            label: "Ba Đình", 
-                      
+                                            //label: "Ba Đình", 
+                                        
                                             values: [{y: 227}, {y: 206.1}, {y: 222.8}, {y: 203.1}, {y: 256.1}, {y:233},{y:230.4},{y:204.1},{y:200}],
                                             config: {
                                             color: processColor(petrel)
 
                                           },
+                                          label: "Ba Đình", 
+                                        
                           
                                         },
                                           {
-                                            label: "Ngọc Khánh", 
-                                            values: [{y: 227}, {y: 199.2}, {y: 270.3}, {y: 228.5}, {y: 26.8}, {y:232},{y:201.7},{y:256.6},{y:200}],
+                                            
+                                            values: [{y:y1}, {y:y2}, {y:y3}, {y:y4}, {y:y5}, {y:y6},{y:y7},{y:y8},{y:y9}],
                                             config: {
                                             color: processColor(greenBlue),
-                                          }
+                                          },
+                                          label: "Ngọc Khánh", 
                                         },
-                                        ]}}
+                                       
+                                        ]
+                                        
+                                      }}
+
+                                      xAxis={{
+                                        valueFormatter: ['01-04','08-04','15-04','22-04','29-04','06-05','13-05','19-05','03-06'],
+                                        valueFormatterPattern:'dd MMM',
+                                        position:'BOTTOM',
+                                        labelCount:9,
+                                        textSize: 8,
+                                        granularity: 1,
+                                        
+                                      }}
+                                    
+                                      
                                       />
-
-
-                               {/* <PureChart
-                                data={sampleData} 
-                                type='line' 
-                                width={'100%'}
-                                height={200}
-                               
-                                customValueRenderer={(index, point) => {
-                                  if (index % 2 === 0) return null
-                                  return (
-                                    <Text style={{textAlign:'center'}}>{point.y}</Text>
-                                  )
-                                }}
-                               />
-                               <View style={{flexDirection:'row', marginTop: 10}}>
-                                 <Text style={{ color:'blue', marginLeft: 10}}>Ba Đình</Text>
-                                 <Text style={{color:'yellow', marginLeft: 20}}>Ngọc Khánh</Text>
-                               </View> */}
 
         </ScrollView>
         <View style = {{height: 50}}></View>
@@ -172,7 +185,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', 
     fontSize: 25,
     color: '#506461',
-    //backgroundColor: '#e8f3f1'
+    backgroundColor: '#e8f3f1'
   },
   button: {
     position: 'absolute',
@@ -206,7 +219,7 @@ const styles = StyleSheet.create({
   linechartOne: {
     marginTop: "3%",
     marginLeft:"3%",
-    width: 380,
+    width: 400,
     height: 250,
   },
 })
