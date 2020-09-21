@@ -51,7 +51,7 @@ function Item(props) {
         <Text style={styles.itemtext}>{props.price}</Text>
       </View>
       <View style={{ padding: 8 }}>
-        {/* <Text style={styles.addresstext}>{props.address}</Text> */}
+        <Text style={styles.addresstext}>{props.address}</Text>
         <View style={styles.detailinformation}>
           <View style={styles.detail}>
             <Text style={{ marginRight: 5 }}>{props.number_bedroom}</Text>
@@ -320,6 +320,7 @@ export default function SearchResultScreen({ navigation }) {
             data={search}
             renderItem={({item}) => (
               <Item
+              address={item.address}
                 price={item.price}
                 number_bedroom={item.number_bedroom}
                 number_bathroom={item.number_bathroom}
